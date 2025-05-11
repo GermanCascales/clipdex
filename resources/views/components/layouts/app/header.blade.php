@@ -4,8 +4,8 @@
         @include('partials.head')
         @fluxAppearance
     </head>
-    <body class="min-h-screen bg-white dark:bg-zinc-800">
-        <flux:header container class="bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700">
+    <body class="min-h-screen bg-white dark:bg-zinc-900">
+        <flux:header container class="bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700">
             <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
 
             <a href="{{ route('home') }}" class="ml-2 mr-5 flex items-center space-x-2 lg:ml-0" wire:navigate>
@@ -18,24 +18,18 @@
             <flux:spacer />
 
             <flux:navbar class="me-4">
-            <flux:input icon="magnifying-glass" placeholder="Busca memes, momentazos, reacciones..."/>
+            <flux:input icon="magnifying-glass" class="w-64 md:w-80 lg:w-96 rounded-full" placeholder="Busca memes, momentazos, reacciones..."/>
             </flux:navbar>
 
             <flux:spacer />
 
-            <flux:button href="{{ route('videos.create') }}" class="mr-4">
+            <flux:button href="{{ route('videos.create') }}" class="mr-4 text-white! bg-[#F36D4C]!">
                 {{ __('Subir un clip') }}
             </flux:button>
 
             <flux:dropdown position="top" align="start">
                 <flux:profile circle avatar="{{ auth()->user()->avatar_url }}" href="{{ route('my.videos') }}" />
                 <flux:menu>
-                    <flux:menu.radio.group>
-                        <flux:menu.radio checked>{{ auth()->user()->name }}</flux:menu.radio>
-                    </flux:menu.radio.group>
-
-                    <flux:menu.separator />
-
                     <flux:menu.item icon="user" href="{{ route('my.videos') }}">
                         {{ __('Mis clips') }}
                     </flux:menu.item>
@@ -43,10 +37,15 @@
                     <flux:menu.separator />
 
                     <flux:menu.radio.group x-data variant="segmented" x-model="$flux.appearance">
-                        <flux:menu.radio value="light" icon="sun">{{ __('Light') }}</flux:menu.radio>
-                        <flux:menu.radio value="dark" icon="moon">{{ __('Dark') }}</flux:menu.radio>
-                        <flux:menu.radio value="system" icon="computer-desktop">{{ __('System') }}</flux:menu.radio>
+                        <flux:menu.radio value="light" icon="sun">{{ __('Claro') }}</flux:menu.radio>
+                        <flux:menu.radio value="dark" icon="moon">{{ __('Oscuro') }}</flux:menu.radio>
+                        <flux:menu.radio value="system" icon="computer-desktop">{{ __('Auto') }}</flux:menu.radio>
                     </flux:menu.radio.group>
+                    <flux:radio.group x-data variant="segmented" x-model="$flux.appearance">
+                        <flux:radio value="light" icon="sun">{{ __('Claro') }}</flux:radio>
+                        <flux:radio value="dark" icon="moon">{{ __('Oscuro') }}</flux:radio>
+                        <flux:radio value="system" icon="computer-desktop">{{ __('Auto') }}</flux:radio>
+                    </flux:radio.group>
 
                     <flux:menu.separator />
 

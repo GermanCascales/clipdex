@@ -1,12 +1,9 @@
 <div>
-    <div class="py-12">
+    <div class="">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
+            <div class="overflow-hidden sm:rounded-lg p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold">Mis clips</h2>
-                    <a href="{{ route('videos.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                        Subir un clip
-                    </a>
                 </div>
 
                 @if (session()->has('message'))
@@ -17,7 +14,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @forelse($videos as $video)
-                        <div class="bg-white rounded-lg shadow-md overflow-hidden" wire:key="{{ $video->id }}">
+                        <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-md overflow-hidden" wire:key="{{ $video->id }}">
                             <div class="aspect-w-16 aspect-h-9 relative group">
                                 @if($video->thumbnail_path)
                                     <div x-data="{ 
