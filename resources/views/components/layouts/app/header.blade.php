@@ -5,27 +5,22 @@
         @fluxAppearance
     </head>
     <body class="min-h-screen bg-white dark:bg-zinc-900">
-        <flux:header container class="bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700">
-            <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
+        <flux:header container class="bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700 py-2">
+            <div class="flex items-center min-w-[240px]">
+                <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
+                <a href="{{ route('home') }}" class="ml-2 mr-5 flex items-center space-x-2 lg:ml-0" wire:navigate>
+                    <x-app-logo />
+                </a>
+            </div>
 
-            <a href="{{ route('home') }}" class="ml-2 mr-5 flex items-center space-x-2 lg:ml-0" wire:navigate>
-                <x-app-logo />
-            </a>
+            <div class="flex-1 flex justify-center">
+                <livewire:search-videos />
+            </div>
 
-            <flux:navbar class="-mb-px max-lg:hidden">
-                <flux:separator vertical variant="subtle" class="my-2"/>
-            </flux:navbar>
-            <flux:spacer />
-
-            <flux:navbar class="me-4">
-            <flux:input icon="magnifying-glass" class="w-64 md:w-80 lg:w-96 rounded-full" placeholder="Busca memes, momentazos, reacciones..."/>
-            </flux:navbar>
-
-            <flux:spacer />
-
-            <flux:button href="{{ route('videos.create') }}" class="mr-4 text-white! bg-[#F36D4C]!">
-                {{ __('Subir un clip') }}
-            </flux:button>
+            <div class="flex items-center justify-end min-w-[240px]">
+                <flux:button href="{{ route('videos.create') }}" class="mr-4 text-white! bg-[#F36D4C]!">
+                    {{ __('Subir un clip') }}
+                </flux:button>
 
             <flux:dropdown position="top" align="start">
                 <flux:profile circle avatar="{{ auth()->user()->avatar_url }}" href="{{ route('my.videos') }}" />
