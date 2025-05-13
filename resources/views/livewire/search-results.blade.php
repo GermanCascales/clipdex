@@ -1,5 +1,5 @@
 <div class="flex flex-col">
-    <div class="bg-[#F36D4C] w-full py-12">
+    <div class="bg-[var(--color-papaya)] w-full py-12">
         <div class="container mx-auto px-4 text-center">
             <h1 class="text-4xl font-bold text-white">{{ $query }}</h1>
             <p class="text-white/90 mt-2">{{ trans_choice('{1} :count clip|[2,*] :count clips', $videos->total()) }}</p>

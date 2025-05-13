@@ -10,7 +10,7 @@
             <input
                 wire:model="search"
                 type="search"
-                class="block w-[480px] h-10 rounded-full bg-[#F5F5F5] border-0 pl-11 pr-4 text-[15px] placeholder-zinc-500 focus:outline-none focus:ring-0 dark:bg-zinc-800/50 dark:placeholder-zinc-400"
+                class="block w-[480px] h-10 rounded-full bg-neutral-200 border-0 pl-11 pr-4 text-[15px] placeholder-neutral-500 focus:outline-none focus:ring-0 dark:bg-neutral-700 dark:placeholder-neutral-400"
                 placeholder="{{ __('Busca memes, momentazos, reacciones...') }}"
             />
         </label>
