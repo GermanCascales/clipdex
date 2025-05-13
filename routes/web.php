@@ -2,6 +2,7 @@
 
 use App\Livewire\CreateVideo;
 use App\Livewire\MyVideos;
+use App\Livewire\SearchResults;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
@@ -12,6 +13,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return redirect()->route('videos.index');
 })->name('home');
+
+Route::view('/search', 'search')->name('search');
 
 // Route::view('dashboard', 'dashboard')
 //    ->middleware(['auth', 'verified'])
