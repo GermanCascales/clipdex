@@ -4,8 +4,8 @@
         @include('partials.head')
         @fluxAppearance
     </head>
-    <body class="min-h-screen bg-white dark:bg-zinc-800">
-        <flux:header container class="bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700">
+    <body class="min-h-screen bg-white dark:bg-zinc-900">
+        <flux:header container class="bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700">
             <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
 
             <a href="{{ route('home') }}" class="ml-2 mr-5 flex items-center space-x-2 lg:ml-0" wire:navigate>
@@ -18,50 +18,61 @@
             <flux:spacer />
 
             <flux:navbar class="me-4">
-            <flux:input icon="magnifying-glass" placeholder="Busca memes, momentazos, reacciones..."/>
+            <flux:input icon="magnifying-glass" class="w-64 md:w-80 lg:w-96 rounded-full" placeholder="Busca memes, momentazos, reacciones..."/>
             </flux:navbar>
 
             <flux:spacer />
 
-            <flux:button href="{{ route('videos.create') }}" class="mr-4">
+            <a href="{{ route('videos.create') }}" class="mr-4 inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium text-white bg-papaya hover:bg-papaya hover:brightness-110 transition-colors duration-200">
                 {{ __('Subir un clip') }}
-            </flux:button>
+            </a>
 
             <flux:dropdown position="top" align="start">
                 <flux:profile circle avatar="{{ auth()->user()->avatar_url }}" href="{{ route('my.videos') }}" />
                 <flux:menu>
-                    <flux:menu.radio.group>
-                        <flux:menu.radio checked>{{ auth()->user()->name }}</flux:menu.radio>
-                    </flux:menu.radio.group>
+                    <a href="{{ route('my.videos') }}" class="block w-full hover:bg-zinc-50 dark:hover:bg-zinc-600 transition-colors duration-150 rounded-md">
+                        <div class="flex items-center gap-3 p-3 w-full">
+                            <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="w-8 h-8 rounded-sm">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-bold">{{ auth()->user()->name }}</span>
+                                <span class="text-zinc-500 dark:text-zinc-300 text-sm">{{ __('Ver mis clips') }}</span>
+                            </div>
+                            <flux:icon.chevron-right class="ml-auto text-zinc-400" />
+                        </div>
+                    </a>
 
                     <flux:menu.separator />
 
-                    <flux:menu.item icon="user" href="{{ route('my.videos') }}">
-                        {{ __('Mis clips') }}
-                    </flux:menu.item>
+                    <div class="flex items-center justify-between px-3 py-1">
+                        <span class="text-sm font-medium">Tema</span>
+                        <div class="inline-flex">
+                            <flux:radio.group x-data variant="segmented" x-model="$flux.appearance" class="w-auto">
+                                <flux:radio value="light" icon="sun" class="w-10"></flux:radio>
+                                <flux:radio value="dark" icon="moon" class="w-10"></flux:radio>
+                                <flux:radio value="system" class="w-10 text-xs">Auto</flux:radio>
+                            </flux:radio.group>
+                        </div>
+                    </div>
 
                     <flux:menu.separator />
 
-                    <flux:menu.radio.group x-data variant="segmented" x-model="$flux.appearance">
-                        <flux:menu.radio value="light" icon="sun">{{ __('Light') }}</flux:menu.radio>
-                        <flux:menu.radio value="dark" icon="moon">{{ __('Dark') }}</flux:menu.radio>
-                        <flux:menu.radio value="system" icon="computer-desktop">{{ __('System') }}</flux:menu.radio>
-                    </flux:menu.radio.group>
-
-                    <flux:menu.separator />
-
-                    <flux:menu.item icon="cog-6-tooth" href="{{ route('settings.profile') }}">
+                    <flux:menu.item class="py-3" icon="cog-6-tooth" href="{{ route('settings.profile') }}">
                         {{ __('Configuración') }}
                     </flux:menu.item>
-
-                    <flux:menu.separator />
-
-                    <flux:menu.item icon="arrow-right-start-on-rectangle" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <flux:menu.item class="py-3" icon="arrow-right-start-on-rectangle" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         {{ __('Cerrar sesión') }}
                     </flux:menu.item>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
                         @csrf
                     </form>
+                    
+                    <flux:menu.separator />
+
+                    <div class="flex gap-4 p-2 text-sm text-zinc-500 dark:text-zinc-400">
+                        <a href="#">Privacidad</a>
+                        <a href="#">Condiciones</a>
+                        <a href="#">Copyright</a>
+                    </div>
                 </flux:menu>
             </flux:dropdown>
         </flux:header>
