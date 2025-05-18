@@ -23,9 +23,9 @@
 
             <flux:spacer />
 
-            <flux:button href="{{ route('videos.create') }}" class="mr-4 text-white! bg-[#F36D4C]!">
+            <a href="{{ route('videos.create') }}" class="mr-4 inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium text-white bg-papaya hover:bg-papaya hover:brightness-110 transition-colors duration-200">
                 {{ __('Subir un clip') }}
-            </flux:button>
+            </a>
 
             <flux:dropdown position="top" align="start">
                 <flux:profile circle avatar="{{ auth()->user()->avatar_url }}" href="{{ route('my.videos') }}" />
