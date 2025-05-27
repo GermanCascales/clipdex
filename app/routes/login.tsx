@@ -1,70 +1,32 @@
-import {
-  BrowserOAuthClient,
-  type OAuthClientMetadataInput,
-} from "@atproto/oauth-client-browser";
 import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router";
+import { authService } from "../services/auth.service";
 import type { Route } from "./+types/login";
-
-const APP_URL = import.meta.env.VITE_APP_URL;
-
-const CLIENT_METADATA: OAuthClientMetadataInput = {
-  client_id: `${APP_URL}/client-metadata.json`,
-  client_name: "Clipdex",
-  client_uri: APP_URL,
-  logo_uri: `${APP_URL}/logo.png`,
-  tos_uri: `${APP_URL}/tos`,
-  policy_uri: `${APP_URL}/policy`,
-  redirect_uris: [`${APP_URL}/login`],
-  scope: "atproto",
-  grant_types: ["authorization_code", "refresh_token"],
-  response_types: ["code"],
-  token_endpoint_auth_method: "none",
-  application_type: "web",
-  dpop_bound_access_tokens: true,
-};
-
-// Reemplazar la inicialización directa del cliente OAuth con una función
-let oauthClient: BrowserOAuthClient | null = null;
-
-// Función para obtener el cliente OAuth solo en el navegador
-function getOAuthClient() {
-  if (typeof window !== "undefined" && !oauthClient) {
-    oauthClient = new BrowserOAuthClient({
-      clientMetadata: CLIENT_METADATA,
-      handleResolver: "https://bsky.social",
-    });
-  }
-  return oauthClient;
-}
 
 export default function Login({ loaderData }: Route.ComponentProps) {
   const [handle, setHandle] = useState("");
   const [errorMessage, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
-    inputRef.current?.focus();
-    // Solo intentar la inicialización OAuth en el cliente
-    const client = getOAuthClient();
-    if (client) {
-      client.init().then((result) => {
-        if (result?.session) {
-          window.location.href = "/";
-        }
-      });
-    }
-  }, []);
+    const checkAuth = async () => {
+      const isAuthenticated = await authService.isAuthenticated();
+      if (isAuthenticated) {
+        navigate("/");
+      }
+    };
+
+    checkAuth();
+  }, [navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    const client = getOAuthClient();
-    if (!client) {
-      setError("Error de inicialización del cliente OAuth");
-      return;
-    }
+
     try {
-      await client.signIn(handle.trim());
+      await authService.signIn(handle);
     } catch (err: any) {
       setError("No se pudo iniciar sesión. Intenta de nuevo.");
     }

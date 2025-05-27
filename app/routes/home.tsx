@@ -1,8 +1,10 @@
 import { Agent, type AppBskyFeedDefs } from "@atproto/api";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import Post from "~/components/post";
 import Search from "~/components/search";
 import Skeleton from "~/components/skeleton";
+import { authService } from "~/services/auth.service";
 import type { Route } from "./+types/home";
 
 export function meta({}: Route.MetaArgs) {
@@ -14,6 +16,19 @@ export default function Home() {
   const [posts, setPosts] = useState<AppBskyFeedDefs.FeedViewPost[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const isAuthenticated = await authService.isAuthenticated();
+      if (!isAuthenticated) {
+        navigate("/login");
+      }
+    };
+
+    checkAuth();
+  }, [navigate]);
 
   const handleSearch = async (query: string) => {
     const agent = new Agent({ service: "https://public.api.bsky.app" });
