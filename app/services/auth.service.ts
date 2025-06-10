@@ -1,5 +1,6 @@
 import {
   BrowserOAuthClient,
+  OAuthSession,
   type OAuthClientMetadataInput,
 } from "@atproto/oauth-client-browser";
 
@@ -24,8 +25,14 @@ const CLIENT_METADATA: OAuthClientMetadataInput = {
 class AuthService {
   private static instance: AuthService;
   private oauthClient: BrowserOAuthClient | null = null;
+  private sub: string | null = null;
 
-  private constructor() {}
+  private constructor() {
+    if (typeof window !== "undefined") {
+      this.sub =
+        localStorage.getItem("@@atproto/oauth-client-browser(sub)") || null;
+    }
+  }
 
   static getInstance(): AuthService {
     if (!AuthService.instance) {
@@ -44,10 +51,14 @@ class AuthService {
     return this.oauthClient;
   }
 
-  async initializeAuth(): Promise<{ session: any } | undefined> {
+  async initializeAuth(): Promise<{ session: OAuthSession } | undefined> {
     const client = this.getOAuthClient();
     if (client) {
-      return await client.init();
+      const result = await client.init();
+      if (this.sub === null && result?.session) {
+        this.sub = result.session.sub;
+      }
+      return result;
     }
     return undefined;
   }
@@ -58,6 +69,10 @@ class AuthService {
       throw new Error("Error de inicialización del cliente OAuth");
     }
     await client.signIn(handle.trim());
+    const session = await client.restore(client.clientMetadata.client_id);
+    if (session) {
+      this.sub = session.sub;
+    }
   }
 
   async isAuthenticated(): Promise<boolean> {
@@ -66,7 +81,34 @@ class AuthService {
     }
 
     const result = await this.initializeAuth();
+
     return !!result?.session;
+  }
+
+  async getSession(): Promise<OAuthSession | null> {
+    const client = this.getOAuthClient();
+    if (!client) {
+      throw new Error("Error de inicialización del cliente OAuth");
+    }
+    try {
+      return await client.restore(client.clientMetadata.client_id);
+    } catch (error) {
+      console.error("Error al obtener la sesión:", error);
+      return null;
+    }
+  }
+
+  async signOut(): Promise<void> {
+    const client = this.getOAuthClient();
+    if (!client) {
+      throw new Error("Error de inicialización del cliente OAuth");
+    }
+    if (!this.sub) {
+      throw new Error("No hay sesión activa para cerrar sesión");
+    }
+    await client.revoke(this.sub);
+
+    this.sub = null;
   }
 }
 

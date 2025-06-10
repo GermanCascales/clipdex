@@ -1,14 +1,9 @@
 import { Form, Link, redirect } from "react-router";
-import { destroySession, getSession } from "../sessions.server";
-import type { Route } from "./+types/logout";
+import { authService } from "~/services/auth.service";
 
-export async function action({ request }: Route.ActionArgs) {
-  const session = await getSession(request.headers.get("Cookie"));
-  return redirect("/login", {
-    headers: {
-      "Set-Cookie": await destroySession(session),
-    },
-  });
+export async function clientAction() {
+  await authService.signOut();
+  return redirect("/login");
 }
 
 export default function LogoutRoute() {
