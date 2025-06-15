@@ -1,0 +1,17 @@
+{
+  "client_id": "https://sturdy-space-telegram-xjqjvjjpj4cp675-5173.app.github.dev/client-metadata.json",
+  "client_name": "Clipdex",
+  "client_uri": "https://sturdy-space-telegram-xjqjvjjpj4cp675-5173.app.github.dev",
+  "logo_uri": "https://sturdy-space-telegram-xjqjvjjpj4cp675-5173.app.github.dev/logo.png",
+  "tos_uri": "https://sturdy-space-telegram-xjqjvjjpj4cp675-5173.app.github.dev/tos",
+  "policy_uri": "https://sturdy-space-telegram-xjqjvjjpj4cp675-5173.app.github.dev/policy",
+  "redirect_uris": [
+    "https://sturdy-space-telegram-xjqjvjjpj4cp675-5173.app.github.dev/login"
+  ],
+  "scope": "atproto transition:generic",
+  "grant_types": ["authorization_code", "refresh_token"],
+  "response_types": ["code"],
+  "token_endpoint_auth_method": "none",
+  "application_type": "web",
+  "dpop_bound_access_tokens": true
+}

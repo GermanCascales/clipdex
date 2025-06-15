@@ -16,8 +16,11 @@ export default function Home() {
   const [posts, setPosts] = useState<AppBskyFeedDefs.FeedViewPost[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
 
   const navigate = useNavigate();
+
+  const [showPlayer, setShowPlayer] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -76,6 +79,10 @@ export default function Home() {
     }
   };
 
+  const toggleMute = () => {
+    setIsMuted((prev) => !prev);
+  };
+
   return (
     <>
       <Search
@@ -88,7 +95,14 @@ export default function Home() {
         {loading ? (
           Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} />)
         ) : posts.length > 0 ? (
-          posts.map((post) => <Post key={post.uri} post={post} />)
+          posts.map((post) => (
+            <Post
+              key={post.uri}
+              post={post}
+              isMuted={isMuted} // Pasa el estado de mute
+              toggleMute={toggleMute} // Pasa la función para alternar mute
+            />
+          ))
         ) : (
           <p className="text-center py-8 dark:text-gray-400">No posts found.</p>
         )}

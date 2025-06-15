@@ -13,7 +13,9 @@
     "@atproto/oauth-client-browser": "^0.3.18",
     "@react-router/node": "^7.5.3",
     "@react-router/serve": "^7.5.3",
+    "hls-video-element": "^1.5.4",
     "isbot": "^5.1.27",
+    "media-chrome": "^4.11.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router": "^7.5.3"
