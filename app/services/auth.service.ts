@@ -91,7 +91,7 @@ class AuthService {
       throw new Error("Error de inicialización del cliente OAuth");
     }
     try {
-      return await client.restore(client.clientMetadata.client_id);
+      return await client.restore(this.sub);
     } catch (error) {
       console.error("Error al obtener la sesión:", error);
       return null;
