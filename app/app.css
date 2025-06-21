@@ -17,3 +17,13 @@ body {
 :root {
   --media-object-fit: cover;
 }
+
+dialog {
+  --media-control-background: transparent;
+  --media-control-hover-background: transparent;
+  --media-object-fit: contain;
+
+  &::backdrop {
+    @apply backdrop-blur-md bg-gray-900/50 transition-all transition-discrete ease-in duration-300 delay-300;
+  }
+}
