@@ -13,7 +13,7 @@ import {
   MediaRenditionMenu,
   MediaRenditionMenuButton,
 } from "media-chrome/react/menu";
-import { forwardRef, useEffect, useRef } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 
 interface ModalVideoProps {
   open: boolean;
@@ -24,6 +24,10 @@ interface ModalVideoProps {
 const ModalVideo = forwardRef<HTMLDialogElement, ModalVideoProps>(
   ({ open, onClose, post }, ref) => {
     const sectionRef = useRef<HTMLElement>(null);
+    const [downloading, setDownloading] = useState(false);
+    const [downloadProgress, setDownloadProgress] = useState<number | null>(
+      null
+    );
 
     useEffect(() => {
       if (!open) return;
@@ -47,13 +51,67 @@ const ModalVideo = forwardRef<HTMLDialogElement, ModalVideoProps>(
       }
     };
 
+    const saveBlobAsFile = (blob: Blob, filename: string) => {
+      const blobUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(blobUrl);
+    };
+
+    const handleDownload = async () => {
+      if (!post || !post.embed) return;
+      setDownloading(true);
+      setDownloadProgress(0);
+      const url = `https://bsky.social/xrpc/com.atproto.sync.getBlob?did=${encodeURIComponent(
+        post.author.did
+      )}&cid=${encodeURIComponent(post.embed.cid)}`;
+      const filename = `clipdex_${post.author.handle}-${post.indexedAt}.mp4`;
+      try {
+        const response = await fetch(url, { credentials: "omit" });
+        if (!response.ok) throw new Error("No se pudo descargar el vídeo");
+
+        const contentLength = response.headers.get("content-length");
+        if (!contentLength) {
+          // fallback: no progress possible
+          const blob = await response.blob();
+          saveBlobAsFile(blob, filename);
+          setDownloadProgress(null);
+          setDownloading(false);
+          return;
+        }
+
+        const total = parseInt(contentLength, 10);
+        let loaded = 0;
+        const reader = response.body!.getReader();
+        const chunks = [];
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          if (value) {
+            chunks.push(value);
+            loaded += value.length;
+            setDownloadProgress(Math.round((loaded / total) * 100));
+          }
+        }
+        const blob = new Blob(chunks);
+        saveBlobAsFile(blob, filename);
+      } catch (e) {
+        alert("No se pudo descargar el vídeo.");
+      } finally {
+        setDownloadProgress(null);
+        setDownloading(false);
+      }
+    };
+
     return (
       <dialog
         ref={ref}
         id="modal-video"
-        className={`inset-0 m-auto w-full max-w-4xl h-[70vh] max-h-[600px] rounded-lg shadow-xl flex overflow-hidden ${
-          !open ? "hidden" : ""
-        }`}
+        className="inset-0 m-auto w-full max-w-4xl h-[70vh] max-h-[600px] rounded-lg shadow-xl overflow-hidden starting:open:opacity-0 starting:open:animate-fade-in starting:open:transition-opacity duration-300"
         open={open}
         onClick={handleClick}
       >
@@ -126,10 +184,12 @@ const ModalVideo = forwardRef<HTMLDialogElement, ModalVideoProps>(
                       : ""}
                   </p>
                   <p className="text-gray-400 text-xs mb-6">
-                    {new Date(post.indexedAt).toLocaleDateString("es-ES", {
+                    {new Date(post.indexedAt).toLocaleDateString(undefined, {
                       day: "numeric",
                       month: "long",
                       year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
                     })}
                   </p>
                   <div className="flex items-center text-gray-500 text-sm space-x-6 mb-6">
@@ -147,21 +207,67 @@ const ModalVideo = forwardRef<HTMLDialogElement, ModalVideoProps>(
                     </div>
                   </div>
                 </div>
-                <div className="mt-auto">
-                  <div className="flex items-center border border-gray-300 rounded-md p-2">
-                    <input
-                      className="text-xs text-gray-700 flex-grow focus:outline-none"
-                      readOnly={true}
-                      type="text"
-                      value={post.uri}
-                    />
-                    <button
-                      className="pl-2 text-xs text-gray-500 hover:text-gray-700"
-                      title="Copiar enlace"
-                    >
-                      <span className="material-icons">link</span>
-                    </button>
-                  </div>
+                <div className="mt-auto flex">
+                  <a
+                    href={`https://bsky.app/profile/${
+                      post.author.handle
+                    }/post/${post.uri.split("/").pop()}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-full border border-blue-500 bg-blue-500 hover:bg-blue-600 transition-colors px-4 py-2 text-xs font-medium text-white shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  >
+                    <span className="material-icons text-base">
+                      open_in_new
+                    </span>
+                    Ver en Bluesky
+                  </a>
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (!downloading) handleDownload();
+                    }}
+                    className={`inline-flex items-center gap-2 rounded-full border border-gray-300 bg-gray-100 hover:bg-gray-200 transition-colors px-4 py-2 text-xs font-medium text-gray-800 shadow focus:outline-none focus:ring-2 focus:ring-gray-400 ml-2 ${
+                      downloading ? "opacity-60 cursor-not-allowed" : ""
+                    }`}
+                    style={{ pointerEvents: downloading ? "none" : "auto" }}
+                    aria-disabled={downloading}
+                  >
+                    {downloading ? (
+                      <>
+                        <svg
+                          className="animate-spin h-4 w-4 mr-2 text-gray-500"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                          ></path>
+                        </svg>
+                        {downloadProgress !== null
+                          ? `${downloadProgress}%`
+                          : "Cargando..."}
+                      </>
+                    ) : (
+                      <>
+                        <span className="material-icons text-base">
+                          download
+                        </span>
+                        Descargar vídeo
+                      </>
+                    )}
+                  </a>
                 </div>
               </div>
             </>
