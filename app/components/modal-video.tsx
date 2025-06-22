@@ -111,14 +111,23 @@ const ModalVideo = forwardRef<HTMLDialogElement, ModalVideoProps>(
       <dialog
         ref={ref}
         id="modal-video"
-        className="inset-0 m-auto w-full max-w-4xl h-[70vh] max-h-[600px] rounded-lg shadow-xl overflow-hidden starting:open:opacity-0 starting:open:animate-fade-in starting:open:transition-opacity duration-300"
+        className="
+      fixed top-0 left-0 w-full h-full max-w-none max-h-none
+      md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2
+      md:w-full md:max-w-4xl md:h-[70vh] md:max-h-[600px]
+      rounded-none md:rounded-lg shadow-xl overflow-hidden
+      starting:open:opacity-0 starting:open:animate-fade-in starting:open:transition-opacity duration-300
+      p-0"
         open={open}
         onClick={handleClick}
       >
-        <section ref={sectionRef} className="relative flex h-full w-full">
+        <section
+          ref={sectionRef}
+          className="relative flex flex-col md:flex-row h-full w-full justify-center"
+        >
           {post && post.embed ? (
             <>
-              <div className="w-2/3 bg-black flex flex-col relative">
+              <div className="w-full md:w-2/3 bg-black flex flex-col relative h-64 md:h-full">
                 <MediaController className="w-full h-full">
                   <HlsVideoElement
                     src={
@@ -159,7 +168,7 @@ const ModalVideo = forwardRef<HTMLDialogElement, ModalVideoProps>(
                   </MediaControlBar>
                 </MediaController>
               </div>
-              <div className="w-1/3 bg-white p-6 flex flex-col justify-between">
+              <div className="w-full md:w-1/3 bg-white p-4 md:p-6 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center">
@@ -207,7 +216,7 @@ const ModalVideo = forwardRef<HTMLDialogElement, ModalVideoProps>(
                     </div>
                   </div>
                 </div>
-                <div className="mt-auto flex">
+                <div className="mt-auto flex justify-center">
                   <a
                     href={`https://bsky.app/profile/${
                       post.author.handle
@@ -276,9 +285,11 @@ const ModalVideo = forwardRef<HTMLDialogElement, ModalVideoProps>(
           )}
           <button
             onClick={onClose}
-            className="absolute right-0 cursor-pointer mb-auto p-2 text-black"
+            className="absolute right-2 top-2 cursor-pointer p-2 text-black md:right-0 md:top-0"
           >
-            <span className="material-icons">close</span>
+            <span className="material-icons bg-white/80 rounded-full">
+              close
+            </span>
           </button>
         </section>
       </dialog>

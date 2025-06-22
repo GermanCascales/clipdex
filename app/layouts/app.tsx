@@ -31,7 +31,7 @@ export default function AppLayout() {
       </header>
       <main className="container mx-auto px-4 py-8">
         <Outlet />
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between flex-wrap mb-6">
           <div className="flex space-x-4 border-b border-gray-300">
             <button className="py-3 px-1 text-red-600 border-b-2 border-red-600 font-semibold flex items-center space-x-1">
               <span className="material-icons text-lg">trending_up</span>
